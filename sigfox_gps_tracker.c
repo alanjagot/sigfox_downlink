@@ -330,7 +330,7 @@ static int DownlinkCallback(uint8_t *rx_frame, uint8_t length)
 	//tfp_printf("Downlink...\r\n");
 	if (rx_frame == 0) {
 		// Finished receiving
-		TD_SIGFOX_DOWNLINK_SetUserCallback(0);
+		//TD_SIGFOX_DOWNLINK_SetUserCallback(0);
 		tfp_printf("RX END\r\n");
 		// Done
 		return 1;
@@ -346,56 +346,72 @@ static int DownlinkCallback(uint8_t *rx_frame, uint8_t length)
 		tfp_printf("rx_frame: %d - %x - %s\r\n", rx_frame, rx_frame, rx_frame);
 		for(i=0;i<8;i++){
 			tfp_printf("rx_frame[%d]: %x - %d\r\n", i, rx_frame[i], rx_frame[i]);
-			switch(rx_frame[7]) {
+			switch(rx_frame[0]) {
 
-			case 0x23 :
+			case 0x04 :
 				acc_scale = TD_ACCELERO_16G;
 				break;
 
-			case 0x22 :
+			case 0x03 :
 				acc_scale = TD_ACCELERO_8G;
 				break;
 
-			case 0x21 :
+			case 0x02 :
 				acc_scale = TD_ACCELERO_4G;
 				break;
 
-			case 0x20 :
+			case 0x01 :
 				acc_scale = TD_ACCELERO_2G;
 				break;
 
-			case 0x17 :
+			case 0x00 :
+				break;
+
+			default :
+				acc_scale = TD_ACCELERO_2G;
+				break;
+			} switch(rx_frame[1]) {
+
+			case 0x08 :
 				acc_freq = TD_ACCELERO_1_25KHZ;
 				break;
 
-			case 0x16 :
+			case 0x07 :
 				acc_freq = TD_ACCELERO_400HZ;
 				break;
 
-			case 0x15 :
+			case 0x06 :
 				acc_freq = TD_ACCELERO_200HZ;
 				break;
 
-			case 0x14 :
+			case 0x05 :
 				acc_freq = TD_ACCELERO_100HZ;
 				break;
 
-			case 0x13 :
+			case 0x04 :
 				acc_freq = TD_ACCELERO_50HZ;
 				break;
 
-			case 0x12 :
+			case 0x03 :
 				acc_freq = TD_ACCELERO_25HZ;
 				break;
 
-			case 0x11 :
+			case 0x02 :
 				acc_freq = TD_ACCELERO_10HZ;
 				break;
 
-			case 0x10 :
+			case 0x01 :
 				acc_freq = TD_ACCELERO_1HZ;
 				break;
 
+			case 0x00 :
+				break;
+
+			default :
+				acc_freq = TD_ACCELERO_1HZ;
+				break;
+
+			} switch (rx_frame[2])	{
 			case 0x0F :
 				TD_SCHEDULER_SetInterval(ds_id,86400,0,0); //24h
 				break;
@@ -449,7 +465,7 @@ static int DownlinkCallback(uint8_t *rx_frame, uint8_t length)
 				break;
 
 			case 0x02 :
-				TD_SCHEDULER_SetInterval(ds_id,1800,0,0); //30 min
+				TD_SCHEDULER_SetInterval(ds_id,3600,0,0); //30 min
 				break;
 
 			case 0x01 :
